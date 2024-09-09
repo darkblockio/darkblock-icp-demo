@@ -65,13 +65,13 @@ brew install podman
 ```
 {
   "canisters": {
-    "message_board": {
+    "darkblocks": {
       "type": "custom",
       "main": "src/index.ts",
       "candid": "src/index.did",
       "candid_gen": "http",
-      "build": "npx azle message_board",
-      "wasm": ".azle/message_board/message_board.wasm",
+      "build": "npx azle darkblocks",
+      "wasm": ".azle/darkblocks/darkblocks.wasm",
       "gzip": true,
       "metadata": [
         {
@@ -87,12 +87,12 @@ brew install podman
   }
 }
 ```
-where `message_board` is the name of the canister. 
+where `darkblocks` is the name of the canister. 
 
 6. Create a `package.json` with the next content and run `npm i`:
 ```
 {
-  "name": "message_board",
+  "name": "darkblocks",
   "version": "0.1.0",
   "description": "Internet Computer message board application",
   "dependencies": {
@@ -140,7 +140,7 @@ On the other hand, you can interact with the canister using `dfx` via CLI:
 ### get canister id:
 - `dfx canister id <CANISTER_NAME>`
 Example:
-- `dfx canister id message_board`
+- `dfx canister id darkblocks`
 Response:
 ```
 bkyz2-fmaaa-aaaaa-qaaaq-cai

@@ -1,13 +1,15 @@
 {
   "canisters": {
-    "message_board": {
+    "darkblocks": {
       "type": "custom",
       "main": "src/index.ts",
       "candid": "src/index.did",
       "candid_gen": "http",
-      "build": "npx azle message_board",
-      "wasm": ".azle/message_board/message_board.wasm",
+      "build": "npx azle darkblocks",
+      "wasm": ".azle/darkblocks/darkblocks.wasm",
+      "env": ["SECRET_KEY"],
       "gzip": true,
+  
       "metadata": [
         {
             "name": "candid:service",
