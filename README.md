@@ -116,7 +116,7 @@ curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/dec
 ### 3. Get Metadata (GET)
 Fetch metadata of a Darkblock:
 ```bash
-curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/metadata/<darkblock_id> -i'
+curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/metadata/<darkblock_id>'
 ```
 
 Success Response Example:
