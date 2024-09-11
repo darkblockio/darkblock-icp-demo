@@ -1,154 +1,138 @@
-## Getting started
+# Darkblock x ICP Demo
 
-To get started developing in the browser, click this button:
+This repository demonstrates the integration of **Darkblock** with the Internet Computer Protocol (ICP), allowing creators to encrypt and consume content based on token ownership. 
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/dacadeorg/icp-message-board-contract)
+### Project Overview
 
-If you rather want to use GitHub Codespaces, click this button instead:
+At **Darkblock**, we empower creators to protect and control their digital content using encryption mechanisms tied to NFTs and token ownership. While our core infrastructure leverages **Arweave** for storing encrypted files, this demo explores how ICP can be used as a cache for encrypted files and integrates with our protocol.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dacadeorg/icp-message-board-contract?quickstart=1)
+Visit [Darkblock.io](https://www.darkblock.io) to learn more about our main platform and services.
 
-**NOTE**: After `dfx deploy`, when developing in GitHub Codespaces, run `./canister_urls.py` and click the links that are shown there.
+This demo focuses on:
+- Storing files using ICP's **StableMapTree** (with plans to transition to a more efficient storage solution such as an **Asset Container**).
+- Basic encryption performed on the canister (to be replaced with Darkblock's **API and Protocol** for stronger encryption in the future).
+- Simple decryption also handled on the canister (to be replaced with our service in a production environment).
 
-If you prefer running VS Code locally and not in the browser, click "Codespaces: ..." or "Gitpod" in the bottom left corner and select "Open in VS Code" in the menu that appears. 
-If prompted, proceed by installing the recommended plugins for VS Code.
+### Roadmap for Future Enhancements
+- Integrating Darkblock Protocol for both encryption and decryption, making use of our full service offering.
+- Caching encrypted files on ICP in addition to Arweave.
+- Enhanced storage options for encrypted files in ICP's ecosystem.
 
-To develop fully locally, first install [Docker](https://www.docker.com/get-started/) and [VS Code](https://code.visualstudio.com/) and start them on your machine.
-Next, click the following button to open the dev container locally:
+---
 
-[![Open locally in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/dacadeorg/icp-message-board-contract)
+## Getting Started
 
-## Prerequisities
+This guide assumes you have the necessary development environment already set up, including **Node.js**, **nvm**, **dfx**, and **podman**. If you're new to ICP, you can follow this [setup guide](https://dacade.org/communities/icp/courses/typescript-smart-contract-101/learning-modules/b14741ea-ee33-43a4-a742-9cdc0a6f0d1c).
 
-1. Install `nvm`:
-- `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash`
+### Installation
 
-2. Switch to node v20:
-- `nvm install 20`
-- `nvm use 20`
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/darkblockio/darkblock-icp-demo.git
+    cd darkblock-icp-demo
+    ```
 
-3. Install build dependencies:
-## For Ubuntu and WSL2
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+
+3. Ensure no other instances of dfx are running:
+    ```bash
+    dfx stop
+    ```
+
+4. Start dfx:
+    ```bash
+    dfx start --host 127.0.0.1:8000 --clean --background
+    ```
+
+    You should see an output similar to:
+    ```
+    Running dfx start for version 0.16.1
+    Initialized replica.
+    Dashboard: http://localhost:37925/_/dashboard
+    ```
+
+5. Deploy canisters:
+   
+    Set up environment variables for encryption, ideally handled by Darkblock services in a production environment:
+    ```bash
+    AZLE_AUTORELOAD=true SECRET_KEY=bf2afddd019815653856e3cf224dced0ddefbbe5f64959d512e2ca42f7674ef4 dfx deploy
+    ```
+
+    You should see a successful deployment message:
+    ```
+    Deploying all canisters.
+    Creating canisters...
+    Creating canister darkblocks...
+    darkblocks canister created with canister id: be2us-64aaa-aaaaa-qaabq-cai
+    Building canisters...
+    Executing 'npx azle darkblocks'
+    Building canister darkblocks
+    Done in 15.38s
+    :tada: Canister darkblocks will be available at http://be2us-64aaa-aaaaa-qaabq-cai.localhost:8000
+    Installing canisters...
+    Creating UI canister on the local network.
+    The UI canister on the "local" network is "br5f7-7uaaa-aaaaa-qaaca-cai"
+    Installing code for canister darkblocks, with canister ID be2us-64aaa-aaaaa-qaabq-cai
+    Deployed canisters.
+    URLs:
+      Backend canister via Candid interface:
+        darkblocks: http://127.0.0.1:8000/?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai&id=be2us-64aaa-aaaaa-qaabq-cai
+    ```
+
+---
+
+## API Endpoints
+
+Once deployed, the following methods are available:
+
+### 1. **Create a Darkblock** (POST)
+   Upload a file and mint a Darkblock:
+   ```bash
+   curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/create' \
+   --form 'file=@small.png' \
+   --form 'name="Darkblock x ICP Demo"' \
+   --form 'creator_address="<your_creator_address>"' \
+   --form 'nft_platform="Solana-Devnet"' \
+   --form 'nft_standard="Metaplex"' -i
 ```
-sudo apt-get install podman
-```
-## For macOS:
-```
-xcode-select --install
-brew install podman
-```
 
-4. Install `dfx`
-- `DFX_VERSION=0.16.1 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"`
-
-5. Add `dfx` to PATH:
-- `echo 'export PATH="$PATH:$HOME/bin"' >> "$HOME/.bashrc"`
-
-6. Create a project structure:
-- create `src` dir
-- create `index.ts` in the `src` dir
-- create `tsconfig.json` in the root directory with the next content
-```
+Success Response:
+```json
 {
-    "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "strictPropertyInitialization": false,
-        "strict": true,
-        "target": "ES2020",
-        "moduleResolution": "node",
-        "allowJs": true,
-        "outDir": "HACK_BECAUSE_OF_ALLOW_JS"
-    }
+  "darkblock_id": "your_darkblock_id",
+  "message": "Darkblock Mint Successful!"
 }
 ```
-- create `dfx.json` with the next content
+
+### 2. Get Decrypted File (GET)
+Retrieve the decrypted file by its ID:
+```bash
+curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/decrypt/<darkblock_id>' --output decrypted_image.png
 ```
+
+### 3. Get Metadata (GET)
+Fetch metadata of a Darkblock:
+```bash
+curl --location 'http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000/darkblock/metadata/<darkblock_id> -i'
+```
+
+Success Response Example:
+
+```json
 {
-  "canisters": {
-    "darkblocks": {
-      "type": "custom",
-      "main": "src/index.ts",
-      "candid": "src/index.did",
-      "candid_gen": "http",
-      "build": "npx azle darkblocks",
-      "wasm": ".azle/darkblocks/darkblocks.wasm",
-      "gzip": true,
-      "metadata": [
-        {
-            "name": "candid:service",
-            "path": "src/index.did"
-        },
-        {
-            "name": "cdk:name",
-            "content": "azle"
-        }
-    ]
-    }
+  "metadata": {
+    "id": "darkblock_id",
+    "name": "Darkblock x ICP Demo",
+    "creator_address": "ZBkPwZPuvY2v6BDkiqow3zUEKN8dmv5fzqzJLmHB2hv",
+    "nft_platform": "Solana-Devnet",
+    "nft_standard": "Metaplex",
+    "filename": "small.png",
+    "mimeType": "image/png",
+    "size": 3131,
+    "createdAt": "2024-09-10T08:43:43.695Z"
   }
 }
 ```
-where `darkblocks` is the name of the canister. 
-
-6. Create a `package.json` with the next content and run `npm i`:
-```
-{
-  "name": "darkblocks",
-  "version": "0.1.0",
-  "description": "Internet Computer message board application",
-  "dependencies": {
-    "@dfinity/agent": "^0.21.4",
-    "@dfinity/candid": "^0.21.4",
-    "azle": "^0.21.1",
-    "express": "^4.18.2",
-    "uuid": "^9.0.1"
-  },
-  "engines": {
-    "node": "^20"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21"
-  }
-}
-
-```
-
-7. Run a local replica
-- `dfx start --host 127.0.0.1:8000`
-
-#### IMPORTANT NOTE 
-If you make any changes to the `StableBTreeMap` structure like change datatypes for keys or values, changing size of the key or value, you need to restart `dfx` with the `--clean` flag. `StableBTreeMap` is immutable and any changes to it's configuration after it's been initialized are not supported.
-- `dfx start --host 127.0.0.1:8000 --clean`
-
-8. Deploy a canister
-- `dfx deploy`
-Also, if you are building an HTTP-based canister and would like your canister to autoreload on file changes (DO NOT deploy to mainnet with autoreload enabled):
-```
-AZLE_AUTORELOAD=true dfx deploy
-```
-
-9. Stop a local replica
-- `dfx stop`
-
-## Interaction with the canister
-
-When a canister is deployed, `dfx deploy` produces a link to the Candid interface in the shell output.
-
-Candid interface provides a simple UI where you can interact with functions in the canister.
-
-On the other hand, you can interact with the canister using `dfx` via CLI:
-
-### get canister id:
-- `dfx canister id <CANISTER_NAME>`
-Example:
-- `dfx canister id darkblocks`
-Response:
-```
-bkyz2-fmaaa-aaaaa-qaaaq-cai
-```
-
-Now, the URL of your canister should like this:
-```
-http://bkyz2-fmaaa-aaaaa-qaaaq-cai.localhost:8000
-```
-
-With this URL, you can interact with the canister using an HTTP client of your choice. We are going to use `curl`.
